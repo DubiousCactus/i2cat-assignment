@@ -1,0 +1,4 @@
+build
+include/glfw-3.4/docs
+include/glfw-3.4/examples
+include/glm/doc
