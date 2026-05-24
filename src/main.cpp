@@ -1,4 +1,5 @@
 // clang-format off
+#include <algorithm>
 #include <cmath>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -65,10 +66,13 @@ int main(void) {
   glm::mat4 canonical_M =
       glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-3.0f, -6.0f, 0.0f)),
                  glm::vec3(0.01f));
+  // Shearing, aka non-uniform "disaplacement" of vertices:
+  glm::mat4 shear_M = glm::scale(glm::mat4(1.0f), glm::vec3(0, 0.0f, 0.0f));
 
   float last_frame = 0.0f;
   const float rot_speed = 2.0f;
   const float t_strength = 1000.0f;
+  const float shear_strength = 1.0f;
   while (!glfwWindowShouldClose(window)) {
     float current_frame = glfwGetTime();
     float delta_time = current_frame - last_frame;
@@ -79,8 +83,15 @@ int main(void) {
     shader.use();
     rotation_M = glm::rotate(rotation_M, rot_speed * 0.1f * 3.14f * delta_time,
                              glm::vec3(0, 1.0f, 0.0f));
-    translation_M = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, sin(current_frame) * t_strength));
-    pcd.draw(shader, camera, canonical_M * translation_M * rotation_M);
+    translation_M =
+        glm::translate(glm::mat4(1.0f),
+                       glm::vec3(0.0f, 0.0f, sin(current_frame) * t_strength));
+    shear_M = glm::scale(
+        glm::mat4(1.0f),
+        glm::vec3(shear_strength * std::max(sin(current_frame), 0.0f) + 1.0f,
+                  1.0f, 1.0f));
+    pcd.draw(shader, camera,
+             canonical_M * shear_M * translation_M * rotation_M);
 
     glfwSwapBuffers(window);
     glfwPollEvents();

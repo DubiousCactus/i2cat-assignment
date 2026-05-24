@@ -14,9 +14,10 @@ this assignment, I re-implemented the basic functionality needed for this in C++
 ### Data structure
 
 For the point cloud data structure, I went for a simple approach of storing each point
-as the suggest struct and aggregating them into a c++ vector. This vector of Point
-structs is wrapped within a PointCloud class, which implemented the data loading onto
-the GPU via Vertex Buffer Objects (VBO) and friends.
+as the suggested struct using the GLM library, and aggregating them into a c++ vector.
+This vector of Point structs is wrapped within a PointCloud class, which implemented the
+data loading onto the GPU via a Vertex Buffer Object (VBO) and a Vertex Array Object
+(VAO).
 
 
 ### Transformations
@@ -29,8 +30,8 @@ extreme parallelism of the GPU pipeline.
 
 ### Rendering
 
-Each point is rendered as a set of $s\times s$ pixels, where $s$ is the square root size
-of the point. In the Shader program, we ...
+I use OpenGL's point rendering pipeline to draw individual points instead of rasterizing
+polygons.
 
 
 ## 2 - Particle system
