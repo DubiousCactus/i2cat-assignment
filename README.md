@@ -1,4 +1,4 @@
-# Point Cloud Transformation and Rendering
+# Assignment submission
 
 This is my i2cat assignment submission.
 
@@ -9,6 +9,7 @@ project directory, run:
 cmake --build build --target i2cat_p1
 ./build/i2cat_p1
 ```
+Note that the point cloud file is expected to be in the project root.
 
 For part 1, I chose to use OpenGL and apply per-point transformations in a shader
 program, since this is the most performant solution I can think of. I already
