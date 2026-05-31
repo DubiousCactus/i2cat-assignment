@@ -45,7 +45,7 @@ int main(void) {
   ShaderProgram shader("./shaders/vertex_p2.glsl",
                        "./shaders/fragment_p1.glsl");
   PointCloud pcd(800, 0.1f);
-  ParticleSystem system(&pcd, 10, 0.1f, 0.02f);
+  ParticleSystem system(&pcd, 20, 0.1f, 0.02f);
 
   float last_frame = 0.0f;
   /* ================================================= */

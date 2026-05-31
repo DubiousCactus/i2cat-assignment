@@ -35,6 +35,25 @@ polygons.
 
 
 ## 2 - Particle system
+For part 2, I used this simple OpenGL engine and extended my PointCloud implementation
+to implement a basic 2D particle system. Each point is assigned a random velocity
+vector, and on each iteration of the render loop, we check for collisions and react
+accordinly. I chose to implement the particle system fully in C++, as opposed to
+something like a Compute Shader, since this is more straightforward and perhaps more
+realistic in terms of real-world applications with CPU only.
 
+To make the collision check efficient, I went for a simple approach of subdividing the
+(normalized coordinate) space into a grid of NxN cells. I then assign each point to its
+grid cell, sort the indices by cell assignment order, and keep track of the cell offsets
+in the sorted list. This gives me a contiguous array of point indices that belong to the
+same cell. I can then efficiently find the neighbours of each point by its current cell
++ the 8 neighbouring cells, resulting in considerably less pairwise distance checks for
+each point. With a grid of 30x30 cells, I can simulate upwards of 5000 points smoothly
+on a macbook air M2.
+
+For collision handling, I chose to simply swap the velocity vectors of both particles,
+with some added randomness. In addition, I apply a small random magnitude scalar between
+0.1 and 2.0, resulting in slightly more chatoic movement to make things more
+interesting.
 
 ## 3 - NeRF point cloud extraction
