@@ -44,7 +44,7 @@ int main(void) {
   /* ========= CORE PART OF THE ASSIGNMENT ============ */
   ShaderProgram shader("./shaders/vertex_p2.glsl",
                        "./shaders/fragment_p1.glsl");
-  PointCloud pcd(800, 0.1f);
+  PointCloud pcd(800, 0.1f); // Try to set it to 10000 :)
   ParticleSystem system(&pcd, 20, 0.1f, 0.02f);
 
   float last_frame = 0.0f;
