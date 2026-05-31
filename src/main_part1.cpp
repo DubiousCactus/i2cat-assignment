@@ -37,7 +37,7 @@ int main(void) {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  GLFWwindow *window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+  GLFWwindow *window = glfwCreateWindow(640, 480, "i2cat part 1", NULL, NULL);
   if (!window) {
     glfwTerminate();
     return -1;
@@ -50,12 +50,17 @@ int main(void) {
     return -1;
   }
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-  glEnable(GL_DEPTH_TEST);
+  // Enabling features
+  glEnable(GL_DEPTH_TEST); // So that closer points occlude those behind
+  glEnable(
+      GL_PROGRAM_POINT_SIZE); // So that we can adjust the size of the points
 
   glm::mat4 camera = makeProjectionViewCamera(glm::vec3(0.0f, 10.0f, 30.0f),
                                               glm::vec3(0.0f, 0.0f, 0.0f));
 
-  ShaderProgram shader("../shaders/vertex.glsl", "../shaders/fragment.glsl");
+  /* ========= CORE PART OF THE ASSIGNMENT ============ */
+  ShaderProgram shader("./shaders/vertex_p1.glsl",
+                       "./shaders/fragment_p1.glsl");
   PointCloud pcd("./Loot.ply");
 
   // This transformation rotates it smoothly at every frame:
@@ -73,6 +78,8 @@ int main(void) {
   const float rot_speed = 2.0f;
   const float t_strength = 1000.0f;
   const float shear_strength = 1.0f;
+  /* ================================================= */
+
   while (!glfwWindowShouldClose(window)) {
     float current_frame = glfwGetTime();
     float delta_time = current_frame - last_frame;
