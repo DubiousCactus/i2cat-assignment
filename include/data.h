@@ -175,7 +175,7 @@ public:
 
       // Check collisions within the current cell + 8 surrounding cells:
       //  ___________
-      // | 0 | 1 | 2 | 
+      // | 0 | 1 | 2 |
       // | 3 | 4 | 5 |
       // | 6 | 7 | 8 |
       //  -----------
@@ -195,9 +195,11 @@ public:
           continue; // Skip bottom edge cases
         size_t neighbour_cell_x = cell_x + (k % 3) - 1;
         size_t neighbour_cell_y = cell_y + floor(k / 3) - 1;
-        size_t neighbour_cell = neighbour_cell_y * n_cells_sqrt + neighbour_cell_x;
+        size_t neighbour_cell =
+            neighbour_cell_y * n_cells_sqrt + neighbour_cell_x;
         // Go through all points in this cell, and check for collisions:
-        for (size_t j = cell_start[neighbour_cell]; j <= cell_end[neighbour_cell]; j++) {
+        for (size_t j = cell_start[neighbour_cell];
+             j <= cell_end[neighbour_cell]; j++) {
           if (i == indices[j])
             continue; // Don't check collision with itself
           auto &pt = pcd->points[indices[j]];
@@ -205,14 +207,18 @@ public:
             // Swap velocities and add some noise to prevent re-swapping
             glm::vec3 temp = this_pt.velocity;
             this_pt.velocity =
-                pt.velocity + random_velocity_2D_normalized() * 0.5f;
-            pt.velocity = temp + random_velocity_2D_normalized() * 0.5f;
+                pt.velocity + random_velocity_2D_normalized() * 0.01f;
+            pt.velocity = temp + random_velocity_2D_normalized() * 0.01f;
             // Normalize the output velocity and multiply by a constant
             // magnitude for all particles. Otherwise this will add up and
             // explode!
-            pt.velocity = glm::normalize(pt.velocity) * velocity_magnitude;
-            this_pt.velocity =
-                glm::normalize(this_pt.velocity) * velocity_magnitude;
+            // Actually we'll add some random multiplier for extra funk!
+            pt.velocity = glm::normalize(pt.velocity) * velocity_magnitude *
+                          (0.05f + (float)rand() / RAND_MAX * 2.0f);
+            this_pt.velocity = glm::normalize(this_pt.velocity) *
+                               velocity_magnitude *
+                               (0.05f + (float)rand() / RAND_MAX * 2.0f);
+            ;
           }
         }
       }
