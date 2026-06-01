@@ -3,6 +3,11 @@
 This is my i2cat assignment submission.
 
 ## 1 - Point cloud manipulation and rendering
+
+
+https://github.com/user-attachments/assets/7d753189-07f8-4b89-9400-75f538f38361
+
+
 To run part 1, please use an OpenGL-compatible environment with cmake, and from the
 project directory, run:
 ```
@@ -43,6 +48,8 @@ polygons.
 
 
 ## 2 - Particle system
+[part2-ezgif.com-gif-maker.webm](https://github.com/user-attachments/assets/209b9822-0f55-461a-865f-95eb057ffee6)
+
 To run part 2, please use an OpenGL-compatible environment with cmake, and from the
 project directory, run:
 ```
