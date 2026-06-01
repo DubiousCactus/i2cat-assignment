@@ -48,7 +48,8 @@ polygons.
 
 
 ## 2 - Particle system
-[part2-ezgif.com-gif-maker.webm](https://github.com/user-attachments/assets/209b9822-0f55-461a-865f-95eb057ffee6)
+[2026-06-01_11-33-41-ezgif.com-video-cutter.webm](https://github.com/user-attachments/assets/d373af7c-a7d6-4f0d-9299-1ec6f63bf51c)
+
 
 To run part 2, please use an OpenGL-compatible environment with cmake, and from the
 project directory, run:
