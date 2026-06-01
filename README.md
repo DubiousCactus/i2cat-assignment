@@ -68,8 +68,8 @@ To make the collision check efficient, I went for a simple approach of subdividi
 (normalized coordinate) space into a grid of NxN cells. I then assign each point to its
 grid cell, sort the indices by cell assignment order, and keep track of the cell offsets
 in the sorted list. This gives me a contiguous array of point indices that belong to the
-same cell. I can then efficiently find the neighbours of each point by its current cell
-+ the 8 neighbouring cells, resulting in considerably less pairwise distance checks for
+same cell. I can then efficiently find the neighbours of each point by its current cell plus 
+the 8 neighbouring cells, resulting in considerably less pairwise distance checks for
 each point. With a grid of 30x30 cells, I can simulate upwards of 20,000 points smoothly
 on a macbook air M2.
 
