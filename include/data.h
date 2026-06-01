@@ -279,18 +279,11 @@ private:
           continue; // Don't check collision with itself
         auto &pt = pcd->points[indices[j]];
         if (collision(this_pt, pt)) {
-          // Prevent stickyness by negating the velocity vector of one of the
-          // two if the dot product is positive, meaning they are moving in
-          // the same direction:
-          if (glm::dot(this_pt.velocity, pt.velocity) > 0) {
-            this_pt.velocity = -pt.velocity;
-          } else {
-            // Swap velocities and add some noise to prevent re-swapping
-            glm::vec3 temp = this_pt.velocity;
-            this_pt.velocity =
-                pt.velocity + random_velocity_2D_normalized() * 0.01f;
-            pt.velocity = temp + random_velocity_2D_normalized() * 0.01f;
-          }
+          // Swap velocities and add some noise to prevent re-swapping
+          glm::vec3 temp = this_pt.velocity;
+          this_pt.velocity =
+              pt.velocity + random_velocity_2D_normalized() * 0.05f;
+          pt.velocity = temp + random_velocity_2D_normalized() * 0.05f;
           // Normalize the output velocity and multiply by a constant
           // magnitude for all particles. Otherwise this will add up and
           // explode!
@@ -300,7 +293,12 @@ private:
           this_pt.velocity = glm::normalize(this_pt.velocity) *
                              velocity_magnitude *
                              (0.05f + (float)rand() / RAND_MAX * 2.0f);
-          ;
+          // Lastly, nudge the particles apart to prevent stickyness, because in
+          // the next iteration, they will still be in collision if they have a
+          // small velocity:
+          glm::vec3 dir = glm::normalize(this_pt.position - pt.position);
+          this_pt.position += dir * padding * 0.01f;
+          pt.position -= dir * padding * 0.01f;
         }
       }
     }

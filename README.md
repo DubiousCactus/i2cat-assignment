@@ -96,11 +96,12 @@ times per point, without updating the positions.
 
 ### Collision handling
 The current solution for handling collisions is rather simple and works well most of the
-time, but sometimes produces "stickiness" of two particles. This may happen when two
-particles are moving in similar directions, and swapping their velocity vectors is
-ineffective in preventing the collision. To solve this, I found that picking one of the
-velocity vectors and giving its negative to the other particle, when the dot product
-between the two velocity vectors is positive, produces better results overall.
+time, but sometimes produces "stickiness" of two particles. This happens when two
+velocity vectors have a low magnitude, preventing the particles from moving away
+sufficiently at the next iteration. This causes the particles to enter a locked state,
+where the collision condition remains true until one of the velocity vectors becomes
+sufficiently large. To fix this, I found that the simplest solution is to nudge the
+particles by a small amount whenever they are in collision.
 
 ## 3 - NeRF point cloud extraction
 
