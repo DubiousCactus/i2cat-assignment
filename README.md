@@ -79,6 +79,14 @@ potentially unlocking millions of points. A GPU solution could even remove the n
 of sorting the indices, by pre-computing cell assignments and operating threads on the
 cell level, similar to the 3DGS rasterizer.
 
+The CPU solution could also be optimized with parallelism and SIMD instructions. For
+instance, each cell could be checked in parallel or up to the number of available
+threads, and a group of points could be computed together in one SIMD instruction.
+However, to prevent race conditions without mutexes, the updates to the velocity vectors
+would need to be applied in a second pass. This could potentially yield better results
+than the current implementation which updates the velocity vectors potentially multiple
+times per point, without updating the positions.
+
 ## 3 - NeRF point cloud extraction
 
 We are looking into the InstantNGP implementation for near real-time NeRFs.
