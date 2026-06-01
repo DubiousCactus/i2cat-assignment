@@ -172,56 +172,7 @@ public:
       // Update the position via velocity integration over time:
       auto &this_pt = pcd->points[i];
       this_pt.position += delta_time * this_pt.velocity;
-
-      // Check collisions within the current cell + 8 surrounding cells:
-      //  ___________
-      // | 0 | 1 | 2 |
-      // | 3 | 4 | 5 |
-      // | 6 | 7 | 8 |
-      //  -----------
-      //  Cell 4 is the current cell
-      size_t cell = cell_assignment[i];
-      size_t cell_x = cell % n_cells_sqrt;
-      size_t cell_y = floor(cell / n_cells_sqrt);
-      for (size_t k = 0; k < 9; k++) {
-        // Compute the cell index of the neighbour cell:
-        if (cell_x == 0 && (k == 0 || k == 3 || k == 6))
-          continue; // Skip left edge cases
-        if (cell_x == n_cells_sqrt - 1 && (k == 2 || k == 5 || k == 8))
-          continue; // Skip right edge cases
-        if (cell_y == 0 && (k == 0 || k == 1 || k == 2))
-          continue; // Skip top edge cases
-        if (cell_y == n_cells_sqrt - 1 && (k == 6 || k == 7 || k == 8))
-          continue; // Skip bottom edge cases
-        size_t neighbour_cell_x = cell_x + (k % 3) - 1;
-        size_t neighbour_cell_y = cell_y + floor(k / 3) - 1;
-        size_t neighbour_cell =
-            neighbour_cell_y * n_cells_sqrt + neighbour_cell_x;
-        // Go through all points in this cell, and check for collisions:
-        for (size_t j = cell_start[neighbour_cell];
-             j <= cell_end[neighbour_cell]; j++) {
-          if (i == indices[j])
-            continue; // Don't check collision with itself
-          auto &pt = pcd->points[indices[j]];
-          if (collision(this_pt, pt)) {
-            // Swap velocities and add some noise to prevent re-swapping
-            glm::vec3 temp = this_pt.velocity;
-            this_pt.velocity =
-                pt.velocity + random_velocity_2D_normalized() * 0.01f;
-            pt.velocity = temp + random_velocity_2D_normalized() * 0.01f;
-            // Normalize the output velocity and multiply by a constant
-            // magnitude for all particles. Otherwise this will add up and
-            // explode!
-            // Actually we'll add some random multiplier for extra funk!
-            pt.velocity = glm::normalize(pt.velocity) * velocity_magnitude *
-                          (0.05f + (float)rand() / RAND_MAX * 2.0f);
-            this_pt.velocity = glm::normalize(this_pt.velocity) *
-                               velocity_magnitude *
-                               (0.05f + (float)rand() / RAND_MAX * 2.0f);
-            ;
-          }
-        }
-      }
+      handlePointCollisions(this_pt, i);
 
       // Constrain the particle to the unit box:
       if (this_pt.position.y + padding > 1.0f) {
@@ -293,6 +244,65 @@ private:
         cell_start[cell] = i;
       }
       cell_end[cell] = i + 1;
+    }
+  }
+
+  void handlePointCollisions(Point &this_pt, size_t pt_idx) {
+    // Check collisions within the current cell + 8 surrounding cells:
+    //  ___________
+    // | 0 | 1 | 2 |
+    // | 3 | 4 | 5 |
+    // | 6 | 7 | 8 |
+    //  -----------
+    //  Cell 4 is the current cell
+    size_t cell = cell_assignment[pt_idx];
+    size_t cell_x = cell % n_cells_sqrt;
+    size_t cell_y = floor(cell / n_cells_sqrt);
+    for (size_t k = 0; k < 9; k++) {
+      // Compute the cell index of the neighbour cell:
+      if (cell_x == 0 && (k == 0 || k == 3 || k == 6))
+        continue; // Skip left edge cases
+      if (cell_x == n_cells_sqrt - 1 && (k == 2 || k == 5 || k == 8))
+        continue; // Skip right edge cases
+      if (cell_y == 0 && (k == 0 || k == 1 || k == 2))
+        continue; // Skip top edge cases
+      if (cell_y == n_cells_sqrt - 1 && (k == 6 || k == 7 || k == 8))
+        continue; // Skip bottom edge cases
+      size_t neighbour_cell_x = cell_x + (k % 3) - 1;
+      size_t neighbour_cell_y = cell_y + floor(k / 3) - 1;
+      size_t neighbour_cell =
+          neighbour_cell_y * n_cells_sqrt + neighbour_cell_x;
+      // Go through all points in this cell, and check for collisions:
+      for (size_t j = cell_start[neighbour_cell]; j <= cell_end[neighbour_cell];
+           j++) {
+        if (pt_idx == indices[j])
+          continue; // Don't check collision with itself
+        auto &pt = pcd->points[indices[j]];
+        if (collision(this_pt, pt)) {
+          // Prevent stickyness by negating the velocity vector of one of the
+          // two if the dot product is positive, meaning they are moving in
+          // the same direction:
+          if (glm::dot(this_pt.velocity, pt.velocity) > 0) {
+            this_pt.velocity = -pt.velocity;
+          } else {
+            // Swap velocities and add some noise to prevent re-swapping
+            glm::vec3 temp = this_pt.velocity;
+            this_pt.velocity =
+                pt.velocity + random_velocity_2D_normalized() * 0.01f;
+            pt.velocity = temp + random_velocity_2D_normalized() * 0.01f;
+          }
+          // Normalize the output velocity and multiply by a constant
+          // magnitude for all particles. Otherwise this will add up and
+          // explode!
+          // Actually we'll add some random multiplier for extra funk!
+          pt.velocity = glm::normalize(pt.velocity) * velocity_magnitude *
+                        (0.05f + (float)rand() / RAND_MAX * 2.0f);
+          this_pt.velocity = glm::normalize(this_pt.velocity) *
+                             velocity_magnitude *
+                             (0.05f + (float)rand() / RAND_MAX * 2.0f);
+          ;
+        }
+      }
     }
   }
 };

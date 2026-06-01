@@ -94,6 +94,14 @@ would need to be applied in a second pass. This could potentially yield better r
 than the current implementation which updates the velocity vectors potentially multiple
 times per point, without updating the positions.
 
+### Collision handling
+The current solution for handling collisions is rather simple and works well most of the
+time, but sometimes produces "stickiness" of two particles. This may happen when two
+particles are moving in similar directions, and swapping their velocity vectors is
+ineffective in preventing the collision. To solve this, I found that picking one of the
+velocity vectors and giving its negative to the other particle, when the dot product
+between the two velocity vectors is positive, produces better results overall.
+
 ## 3 - NeRF point cloud extraction
 
 We are looking into the InstantNGP implementation for near real-time NeRFs.
